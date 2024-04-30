@@ -71,3 +71,33 @@ func saveToken(path string, token *oauth2.Token) {
 	defer f.Close()
 	json.NewEncoder(f).Encode(token)
 }
+
+func writeToSheet(app *tview.Application, state *AppState) {
+	client := getClient()
+
+	srv, err := sheets.New(client)
+	if err != nil {
+			log.Printf("Unable to retrieve Sheets client: %v", err)
+			return
+	}
+
+	var writeRange string
+	if state.TransactionType == "Expense" {
+			writeRange = "Transactions!B6:E6"
+	} else {
+			writeRange = "Transactions!G6:J6"
+	}
+
+	spreadsheetId := "1xmbTeGZn6zJcFFjcq2Rm63Bh7IQvn8R7YeX6RjJuMiY"
+	vr := &sheets.ValueRange{
+			Values: [][]interface{}{{state.Date, state.Amount, state.Description, state.Category}},
+	}
+
+	_, err = srv.Spreadsheets.Values.Append(spreadsheetId, writeRange, vr).ValueInputOption("USER_ENTERED").InsertDataOption("INSERT_ROWS").Do()
+	if err != nil {
+			state.StatusMessage = fmt.Sprintf("Failed to write data: %v", err)
+	} else {
+			state.StatusMessage = "Data written successfully!"
+			fmt.Println("Data written successfully!")
+	}
+}
