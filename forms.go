@@ -37,4 +37,45 @@ func showFinishedScreen(app *tview.Application, message string) {
 	app.SetRoot(finishedScreen, true)
 }
 
+func showInputForm(app *tview.Application, state *AppState) {
+	form := tview.NewForm().
+		AddInputField("Amount", "", 20, nil, func(text string) { state.Amount = text }).
+		AddInputField("Description", "", 40, nil, func(text string) { state.Description = text }).
+		AddButton("Submit", func() {
+			showLoadingScreen(app, state)
+		}).
+		AddButton("Cancel", func() {
+			app.Stop()
+			os.Exit(0)
+		})
+	form.SetBorder(true).SetTitle("Enter Details").SetTitleAlign(tview.AlignLeft)
+	app.SetRoot(form, true).SetFocus(form)
+}
+
+func getCategoryByTransactionType(transactionType string) []string {
+	if transactionType == "Expense" {
+			return []string{"Food", "Gifts", "Health/medical", "Home", "Transportation", "Personal", "Pets", "Utilities", "Travel", "Debt", "Other"}
+	}
+	return []string{"Savings", "Paycheck", "Bonus", "Interest", "Other"}
+}
+
+func newCategoryList(app *tview.Application, state *AppState, mainMenu *tview.List) *tview.List {
+	list := tview.NewList()
+	categories := getCategoryByTransactionType(state.TransactionType)
+	for _, category := range categories {
+			list.AddItem(category, "", 0, nil)
+	}
+	list.AddItem("Back", "", 'b', func() {
+			app.SetRoot(mainMenu, true)
+	})
+
+	list.SetBorder(true).SetTitle("Select category").SetTitleAlign(tview.AlignLeft)
+	list.SetSelectedFunc(func(i int, category string, description string, rune rune) {
+			state.Category = category
+			showInputForm(app, state)
+	})
+	return list
+}
+
+
 
