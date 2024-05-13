@@ -25,7 +25,7 @@ Before you install the Finance Tracker, ensure you have the following:
 
 2. **Set up Google Cloud credentials**
 
-   Place the `credentials.json` file that was sent via gradescope in the root directory of the project. This file is necessary for authenticating with the Google Sheets API.
+   NOTE: To allow easier testing, I've included the `credentials.json` and the `token.json`. These files will be used to authenticate with Google Sheets API while the project is being graded and will be removed shortly after. This is a temporary solution.
 
 3. **Install dependencies**
 

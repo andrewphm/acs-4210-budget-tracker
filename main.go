@@ -10,12 +10,16 @@ func getCurrentFormattedDate() string {
 }
 
 func main() {
-    app := tview.NewApplication()
-    state := &AppState{
-			Date: getCurrentFormattedDate(),
-		}
-    setupAppUI(app, state)
-    if err := app.Run(); err != nil {
-        panic(err)
+    client := getClient()
+
+    if client != nil {
+        app := tview.NewApplication()
+        state := &AppState{
+                Date: getCurrentFormattedDate(),
+            }
+        setupAppUI(app, state)
+        if err := app.Run(); err != nil {
+            panic(err)
+        }
     }
 }
